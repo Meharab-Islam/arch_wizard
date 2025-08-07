@@ -148,7 +148,7 @@ Get$className get${className}UseCase(Get${className}UseCaseRef ref) {
 Future<$className> ${featureName}Details(${className}DetailsRef ref, {required String id}) async {
   final useCase = ref.watch(get${className}UseCaseProvider);
   
-  // UPDATED: Handle the Either type for robust error handling.
+  // UPDATED: Correctly handles the Either type for robust error handling.
   final result = await useCase(id);
   
   return result.fold(
@@ -156,7 +156,7 @@ Future<$className> ${featureName}Details(${className}DetailsRef ref, {required S
     // and automatically expose it as an AsyncError state to the UI.
     (failure) => throw Exception('Error Message from Failure object'),
     
-    // On success, return the data. This will be exposed as an AsyncData state.
+    // On success, return the data.
     (data) => data,
   );
 }
