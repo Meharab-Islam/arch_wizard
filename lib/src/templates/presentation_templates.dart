@@ -133,36 +133,52 @@ String riverpodTemplate(String className, String featureName) =>
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
-// TODO: Make sure your GetIt instance is accessible, e.g., import 'path/to/injection_container.dart';
+// TODO: Make sure your GetIt instance is accessible by importing your injection_container.dart
+// import 'package:your_app_name/injection_container.dart'; 
 // TODO: Make sure you have Failure classes and the dartz package for Either.
+// import 'package:your_app_name/core/error/failures.dart';
 
 /// Provides the UseCase from the GetIt service locator.
-/// This allows other providers to access the business logic.
+///
+/// This provider is responsible for bridging the dependency injection setup (GetIt)
+/// with Riverpod. It allows other providers to access the business logic layer
+/// in a clean, testable way.
 final get${className}UseCaseProvider = Provider<Get$className>((ref) {
+  // Replace 'sl' with your actual GetIt instance if named differently.
   return sl<Get$className>();
 });
 
-/// Fetches the feature details for a given ID.
+/// Fetches the feature details for a given ID and manages the async state.
 ///
-/// This is an auto-disposing, family provider.
-/// - `.family` allows you to pass in the 'id'.
-/// - `.autoDispose` automatically cleans up the state when the UI no longer needs it.
+/// This is an auto-disposing, family provider:
+/// - `.family` allows you to pass in the changing 'id' parameter.
+/// - `.autoDispose` automatically cleans up the provider's state when it's no
+///   longer being listened to, saving memory and preventing stale data.
 final ${featureName}DetailsProvider = FutureProvider.autoDispose.family<$className, String>((ref, id) async {
+  // Watch the use case provider to get an instance of the business logic.
   final useCase = ref.watch(get${className}UseCaseProvider);
   
-  // Handle the Either type for robust error handling.
+  // Execute the use case to fetch data.
   final result = await useCase(id);
   
+  // Use .fold() to safely handle both failure and success states from the Either type.
   return result.fold(
-    // On failure, throw an exception. Riverpod will catch this 
-    // and expose it as an error state to the UI.
-    (failure) => throw Exception('Error Message from Failure object'),
+    // On failure, throw an exception. Riverpod will automatically catch this
+    // and expose it as an AsyncError state to the UI.
+    (failure) {
+      // You can map different failure types to different error messages here.
+      // For now, we'll throw a generic exception.
+      throw Exception('Failed to load data. Please try again.');
+    },
     
-    // On success, return the data.
+    // On success, return the data. Riverpod will expose this as an AsyncData state.
     (data) => data,
   );
 });
 ''';
+
+
+
 // --- Provider Template ---
 String providerTemplate(String className, String featureName) =>
     '''
