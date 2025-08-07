@@ -1,8 +1,8 @@
-## 1.0.1 
+## 1.0.0-beta.1
 
-- Added automatic DI file creation.
+- Fixed an issue in the Riverpod template to correctly handle error states and code generation.
+- Added automatic DI file creation if it doesn't exist.
 - Updated templates with robust error handling.
-
 
 ## 1.0.0
 
