@@ -14,7 +14,7 @@ A powerful and flexible command-line tool to scaffold complete features for your
 
 -   **Automated Scaffolding**: Generate the entire directory structure for a new feature with a single command.
 -   **Clean Architecture**: Enforces a solid, scalable architecture with a clear separation of layers (Domain, Data, Presentation).
--   **State Management Support**: Out-of-the-box templates for BLoC, Riverpod, GetX, and Provider.
+-   **State Management Support**: Out-of-the-box templates for `BLoC`, `Riverpod`, `GetX`, and `Provider`.
 -   **Automatic DI Registration**: Automatically injects your new dependencies and imports into a `get_it` service locator file.
 -   **Production-Ready Templates**: Generates code with robust error-handling patterns.
 
@@ -47,8 +47,14 @@ arch_wizard create_feature --name <your_feature_name> --state <state_management>
 # Create a 'login' feature using BLoC
 arch_wizard create_feature --name login --state bloc
 
-# Create a 'cart' feature using Riverpod
-arch_wizard create_feature --name cart --state riverpod
+# Create a 'login' feature using Riverpod
+arch_wizard create_feature --name login --state riverpod
+
+# Create a 'login' feature using Riverpod
+arch_wizard create_feature --name login --state getx
+
+# Create a 'login' feature using Riverpod
+arch_wizard create_feature --name login --state provider
 ```
 
 The tool will create all the necessary files in `lib/features/<your_feature_name>/` and update your dependency injection file automatically.
