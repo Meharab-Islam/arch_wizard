@@ -9,6 +9,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   args: ^2.4.2
+  get_it: ^8.2.0
   mason_logger: ^0.3.3
 
 dev_dependencies:
