@@ -178,7 +178,6 @@ final ${featureName}DetailsProvider = FutureProvider.autoDispose.family<$classNa
 ''';
 
 
-
 // --- Provider Template ---
 String providerTemplate(String className, String featureName) =>
     '''
