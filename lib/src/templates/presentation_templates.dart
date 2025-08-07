@@ -133,48 +133,29 @@ String riverpodTemplate(String className, String featureName) =>
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
-import '../../../../injection_container.dart';
 // TODO: Make sure your GetIt instance is accessible by importing your injection_container.dart
 // import 'package:your_app_name/injection_container.dart'; 
 // TODO: Make sure you have Failure classes and the dartz package for Either.
 // import 'package:your_app_name/core/error/failures.dart';
 
 /// Provides the UseCase from the GetIt service locator.
-///
-/// This provider is responsible for bridging the dependency injection setup (GetIt)
-/// with Riverpod. It allows other providers to access the business logic layer
-/// in a clean, testable way.
 final get${className}UseCaseProvider = Provider<Get$className>((ref) {
-  // Replace 'sl' with your actual GetIt instance if named differently.
   return sl<Get$className>();
 });
 
 /// Fetches the feature details for a given ID and manages the async state.
-///
-/// This is an auto-disposing, family provider:
-/// - `.family` allows you to pass in the changing 'id' parameter.
-/// - `.autoDispose` automatically cleans up the provider's state when it's no
-///   longer being listened to, saving memory and preventing stale data.
 final ${featureName}DetailsProvider = FutureProvider.autoDispose.family<$className, String>((ref, id) async {
-  // Watch the use case provider to get an instance of the business logic.
   final useCase = ref.watch(get${className}UseCaseProvider);
-  
-  // Execute the use case to fetch data.
   final result = await useCase(id);
   
-  // Use .fold() to safely handle both failure and success states from the Either type.
-  return result.fold(
-    // On failure, throw an exception. Riverpod will automatically catch this
-    // and expose it as an AsyncError state to the UI.
-    (failure) {
-      // You can map different failure types to different error messages here.
-      // For now, we'll throw a generic exception.
-      throw Exception('Failed to load data. Please try again.');
-    },
+  // UPDATED: Replaced .fold() with a switch statement for pattern matching.
+  return switch (result) {
+    // On success, extract the data from the 'Right' side and return it.
+    Right(value: final data) => data,
     
-    // On success, return the data. Riverpod will expose this as an AsyncData state.
-    (data) => data,
-  );
+    // On failure, extract the failure object from the 'Left' side and throw an exception.
+    Left(value: final failure) => throw Exception('Failed to load data. Please try again.'),
+  };
 });
 ''';
 
