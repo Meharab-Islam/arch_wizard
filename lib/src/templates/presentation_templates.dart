@@ -131,34 +131,46 @@ class ${className}Controller extends GetxController {
 String riverpodTemplate(String className, String featureName) =>
     '''
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dartz/dartz.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
-// TODO: Make sure your GetIt instance is accessible by importing your injection_container.dart
-// import 'package:your_app_name/injection_container.dart'; 
-// TODO: Make sure you have Failure classes and the dartz package for Either.
-// import 'package:your_app_name/core/error/failures.dart';
+import '../../../../injection_container.dart';
+import '../../../../core/error/failures.dart';
 
 /// Provides the UseCase from the GetIt service locator.
+///
+/// This provider is responsible for bridging the dependency injection setup (GetIt)
+/// with Riverpod. It allows other providers to access the business logic layer
+/// in a clean, testable way.
 final get${className}UseCaseProvider = Provider<Get$className>((ref) {
+  // Replace 'sl' with your actual GetIt instance if named differently.
   return sl<Get$className>();
 });
 
 /// Fetches the feature details for a given ID and manages the async state.
+///
+/// This is an auto-disposing, family provider:
+/// - `.family` allows you to pass in the changing 'id' parameter.
+/// - `.autoDispose` automatically cleans up the provider's state when it's no
+///   longer being listened to, saving memory and preventing stale data.
 final ${featureName}DetailsProvider = FutureProvider.autoDispose.family<$className, String>((ref, id) async {
+  // Watch the use case provider to get an instance of the business logic.
   final useCase = ref.watch(get${className}UseCaseProvider);
+  
+  // Execute the use case to fetch data.
   final result = await useCase(id);
   
-  // UPDATED: Replaced .fold() with a switch statement for pattern matching.
+  // Use a switch expression to safely handle both failure and success states.
   return switch (result) {
     // On success, extract the data from the 'Right' side and return it.
     Right(value: final data) => data,
     
     // On failure, extract the failure object from the 'Left' side and throw an exception.
-    Left(value: final failure) => throw Exception('Failed to load data. Please try again.'),
+    // Riverpod will automatically catch this and expose it as an AsyncError state.
+    Left(value: final failure) => throw Exception(failure.toString()),
   };
 });
 ''';
-
 
 // --- Provider Template ---
 String providerTemplate(String className, String featureName) =>
