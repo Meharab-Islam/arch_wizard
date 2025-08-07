@@ -1,53 +1,70 @@
-String domainEntityTemplate(String className) =>
-    '''
+String domainEntityTemplate(String className) => '''
 import 'package:equatable/equatable.dart';
 
+/// Domain entity representing [$className].
+/// This is a plain, immutable class that defines core properties of your feature.
 class $className extends Equatable {
-  final String id;
+  // TODO: Define required properties
+  // final String name;
+  // final int age;
 
   const $className({
-    required this.id,
+    // TODO: Add required fields to constructor
+    // required this.name,
+    // required this.age,
   });
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [
+    // TODO: Add properties to props list
+    // name,
+    // age,
+  ];
 }
 ''';
 
-String domainRepoTemplate(String className) =>
-    '''
-// TODO: Add the 'dartz' package to your pubspec.yaml for Either type.
-// TODO: Create a Failure class hierarchy (e.g., core/error/failures.dart).
+
+String domainRepoTemplate(String className) => '''
+// TODO: Uncomment and configure if using error handling via dartz
 // import 'package:dartz/dartz.dart';
 // import 'package:your_app/core/error/failures.dart';
+
 import '../entities/${className.toLowerCase()}.dart';
 
-/// The contract for the data layer.
+/// Repository contract for [$className].
+/// Handles data access from different sources (API, cache, DB, etc.).
 abstract class ${className}Repository {
-  /// Fetches a [$className] object.
-  /// Returns [Either] a [Failure] or the [$className] data.
-  Future< /* Either<Failure,*/ $className> get$className(String id);
+  /// Fetches [$className] from data source.
+  /// 
+  /// You can return Either<Failure, $className> for error handling if desired.
+  Future</* Either<Failure, */ $className /* > */> get$className(
+    /* TODO: Add required parameters, e.g. String id */
+  );
 }
 ''';
-
-String useCaseTemplate(String className, String featureName) =>
-    '''
+String useCaseTemplate(String className, String featureName) => '''
+// TODO: Uncomment and configure if using error handling via dartz
 // import 'package:dartz/dartz.dart';
 // import 'package:your_app/core/error/failures.dart';
+
 import '../entities/$featureName.dart';
 import '../repositories/${featureName}_repository.dart';
 
-/// A single business logic unit.
+/// Use case for fetching [$className].
+/// Encapsulates business logic for the operation.
 class Get$className {
   final ${className}Repository repository;
 
   Get$className(this.repository);
 
   /// Executes the use case.
-  Future< /* Either<Failure,*/ $className> call(String id) async {
-    // This is where more complex business logic could go,
-    // like combining data from multiple repositories.
-    return await repository.get$className(id);
+  Future</* Either<Failure, */ $className /* > */> call(
+    /* TODO: Add required parameters, e.g. String id */
+  ) async {
+    // TODO: Add any business rules or preprocessing here
+    return await repository.get$className(
+      /* TODO: Pass parameters here */
+    );
   }
 }
 ''';
