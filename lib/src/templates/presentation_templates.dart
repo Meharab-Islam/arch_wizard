@@ -184,6 +184,7 @@ String providerTemplate(String className, String featureName) =>
 import 'package:flutter/material.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
+import '../../../../injection_container.dart';
 
 enum ViewState { initial, loading, loaded, error }
 
