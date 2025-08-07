@@ -128,39 +128,40 @@ class ${className}Controller extends GetxController {
 ''';
 
 // --- Riverpod Template ---
-String riverpodTemplate(String className, String featureName) =>
-    '''
+String riverpodTemplate(String className, String featureName) => '''
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:dartz/dartz.dart';
+
+import '../../core/error/failures.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
-// TODO: Make sure your GetIt instance is accessible, e.g., import 'path/to/injection_container.dart';
-// TODO: Make sure you have Failure classes and the dartz package for Either.
+import '../../injection_container.dart';
 
 part '${featureName}_provider.g.dart';
 
+/// Provides the use case for getting $className
 @riverpod
 Get$className get${className}UseCase(Get${className}UseCaseRef ref) {
-  // Assuming 'sl' is your global GetIt instance
   return sl<Get$className>();
 }
 
+/// Provides the $className details using the provided [id]
 @riverpod
 Future<$className> ${featureName}Details(${className}DetailsRef ref, {required String id}) async {
   final useCase = ref.watch(get${className}UseCaseProvider);
-  
-  // UPDATED: Correctly handles the Either type for robust error handling.
-  final result = await useCase(id);
-  
+
+  final Either<Failure, $className> result = await useCase(id);
+
   return result.fold(
-    // On failure, throw an exception. Riverpod's AsyncValue will catch this 
-    // and automatically expose it as an AsyncError state to the UI.
-    (failure) => throw Exception('Error Message from Failure object'),
-    
-    // On success, return the data.
+    (failure) {
+      // You may customize this to return more descriptive errors
+      throw Exception(failure.message ?? 'Unexpected error occurred');
+    },
     (data) => data,
   );
 }
 ''';
+
 // --- Provider Template ---
 String providerTemplate(String className, String featureName) =>
     '''
