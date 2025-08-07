@@ -3,11 +3,9 @@ import 'package:equatable/equatable.dart';
 
 class $className extends Equatable {
   final String id;
-  final String name; // Example of an additional property
 
   const $className({
     required this.id,
-    required this.name,
   });
 
   @override

@@ -6,14 +6,12 @@ class ${className}Model extends $className {
   // The constructor now accepts all required parameters from the parent.
   const ${className}Model({
     required super.id,
-    required super.name, // Added 'name' to satisfy the parent
   });
 
   // The fromJson factory must also be updated to parse all properties.
   factory ${className}Model.fromJson(Map<String, dynamic> json) {
     return ${className}Model(
       id: json['id'] as String,
-      name: json['name'] as String? ?? 'N/A', // Example of handling potential nulls
     );
   }
 
