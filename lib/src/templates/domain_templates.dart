@@ -32,21 +32,25 @@ abstract class ${className}Repository {
 
 String useCaseTemplate(String className, String featureName) =>
     '''
-// import 'package:dartz/dartz.dart';
-// import 'package:your_app/core/error/failures.dart';
+// TODO: Add the 'dartz' package to your pubspec.yaml for the Either type.
+import 'package:dartz/dartz.dart';
+import 'package:your_app/core/error/failures.dart';
 import '../entities/$featureName.dart';
 import '../repositories/${featureName}_repository.dart';
 
-/// A single business logic unit.
+/// A single, reusable unit of business logic.
 class Get$className {
   final ${className}Repository repository;
 
   Get$className(this.repository);
 
   /// Executes the use case.
-  Future< /* Either<Failure,*/ $className> call(String id) async {
+  ///
+  /// Returns a [Future] containing either a [Failure] on error
+  /// or a [$className] on success.
+  Future<Either<Failure, $className>> call(String id) async {
     // This is where more complex business logic could go,
-    // like combining data from multiple repositories.
+    // like combining data from multiple repositories or validating input.
     return await repository.get$className(id);
   }
 }
