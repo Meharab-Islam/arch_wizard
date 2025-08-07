@@ -3,17 +3,24 @@ import '../../domain/entities/$featureName.dart';
 
 /// The data model that extends the domain entity.
 class ${className}Model extends $className {
-  const ${className}Model({required super.id});
+  // The constructor now accepts all required parameters from the parent.
+  const ${className}Model({
+    required super.id,
+    required super.name, // Added 'name' to satisfy the parent
+  });
 
+  // The fromJson factory must also be updated to parse all properties.
   factory ${className}Model.fromJson(Map<String, dynamic> json) {
     return ${className}Model(
       id: json['id'] as String,
+      name: json['name'] as String? ?? 'N/A', // Example of handling potential nulls
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'name': name,
     };
   }
 }
