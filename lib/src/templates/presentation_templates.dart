@@ -133,6 +133,7 @@ String riverpodTemplate(String className, String featureName) =>
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
+import '../../../../injection_container.dart';
 // TODO: Make sure your GetIt instance is accessible by importing your injection_container.dart
 // import 'package:your_app_name/injection_container.dart'; 
 // TODO: Make sure you have Failure classes and the dartz package for Either.
@@ -184,7 +185,6 @@ String providerTemplate(String className, String featureName) =>
 import 'package:flutter/material.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
-import '../../../../injection_container.dart';
 
 enum ViewState { initial, loading, loaded, error }
 
