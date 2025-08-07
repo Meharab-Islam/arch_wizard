@@ -1,79 +1,69 @@
-String dataModelTemplate(String className, String featureName) => '''
+String dataModelTemplate(String className, String featureName) =>
+    '''
 import '../../domain/entities/$featureName.dart';
 
-/// [${className}Model] extends the domain entity [$className] and
-/// is responsible for parsing from and converting to JSON.
+/// The data model that extends the domain entity.
 class ${className}Model extends $className {
-  // TODO: Add model-specific properties here (if any)
-
+  // The constructor now accepts all required parameters from the parent.
   const ${className}Model({
-    // TODO: Add required super.fieldName,
-    // required super.name,
+    required super.id,
   });
 
-  /// Creates a [${className}Model] from JSON data.
+  // The fromJson factory must also be updated to parse all properties.
   factory ${className}Model.fromJson(Map<String, dynamic> json) {
     return ${className}Model(
-      // TODO: Map JSON fields to constructor parameters
-      // name: json['name'] as String,
+      id: json['id'] as String,
     );
   }
 
-  /// Converts [${className}Model] instance to JSON.
   Map<String, dynamic> toJson() {
     return {
-      // TODO: Map model properties to JSON keys
-      // 'name': name,
+      'id': id,
+   
     };
   }
 }
 ''';
 
-
-String remoteDataSourceTemplate(String className, String featureName) => '''
+String remoteDataSourceTemplate(String className, String featureName) =>
+    '''
 import '../models/${featureName}_model.dart';
 
-/// Abstract contract for remote data operations related to [$className].
+/// The contract for remote data operations.
 abstract class ${className}RemoteDataSource {
-  /// Fetches [$className] from remote source by ID or any other identifier.
-  Future<${className}Model> get$className(/* TODO: Add required params */);
+  Future<${className}Model> get$className(String id);
 }
 
-/// Concrete implementation of [${className}RemoteDataSource].
+/// The implementation of the remote data source.
 class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
-  // TODO: Inject dependencies such as http.Client or Dio
   // final http.Client client;
   // ${className}RemoteDataSourceImpl({required this.client});
 
   @override
-  Future<${className}Model> get$className(/* TODO: Add params */) async {
-    // TODO: Replace mock delay and data with actual API logic
+  Future<${className}Model> get$className(String id) async {
+    // Simulating a network call.
     await Future.delayed(const Duration(seconds: 1));
-
-    return ${className}Model(
-      // TODO: Provide mock or parsed data here
-    );
+    return ${className}Model(id: id);
   }
 }
 ''';
 
-String dataRepoImplTemplate(String className, String featureName) => '''
+String dataRepoImplTemplate(String className, String featureName) =>
+    '''
 import '../../domain/entities/$featureName.dart';
 import '../../domain/repositories/${featureName}_repository.dart';
 import '../datasources/${featureName}_remote_data_source.dart';
 
-/// Implementation of the [${className}Repository] interface.
-/// Responsible for handling business logic and delegating data retrieval to remote sources.
+/// The implementation of the domain repository.
 class ${className}RepositoryImpl implements ${className}Repository {
   final ${className}RemoteDataSource remoteDataSource;
-
+  
   ${className}RepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<$className> get$className(/* TODO: Add required params */) async {
-    final remoteData = await remoteDataSource.get$className(/* TODO: Pass params */);
-
-    // TODO: If Model and Entity differ, map Model to Entity here
+  Future<$className> get$className(String id) async {
+    // You can handle mapping from Model to Entity here if they differ.
+    final remoteData = await remoteDataSource.get$className(id);
     return remoteData;
   }
 }
