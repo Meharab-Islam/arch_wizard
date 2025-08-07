@@ -1,6 +1,7 @@
 name: arch_wizard
-description: A simple command-line application.
 version: 1.0.0
+description: A powerful CLI tool to scaffold Flutter clean architecture features...
+repository: https://github.com/Meharab-Islam/arch_wizard.git
 # repository: https://github.com/my_org/my_repo
 
 environment:

@@ -36,7 +36,9 @@ Future<void> registerDependencies(
       await diFile.create(recursive: true);
       await diFile.writeAsString(diFileTemplate);
       logger.success('✅ Created "$diFilePath" successfully.');
-      logger.warn('Please remember to call the init() function in your main.dart file!');
+      logger.warn(
+        'Please remember to call the init() function in your main.dart file!',
+      );
     } catch (e) {
       logger.err('Failed to create "$diFilePath": $e');
       return; // Stop execution if file creation fails
@@ -49,7 +51,10 @@ Future<void> registerDependencies(
 
     // Handle Imports
     if (content.contains(importMarker)) {
-      content = content.replaceFirst(importMarker, '$newImports\n$importMarker');
+      content = content.replaceFirst(
+        importMarker,
+        '$newImports\n$importMarker',
+      );
       modified = true;
     } else {
       logger.warn('Warning: Import marker "$importMarker" not found.');

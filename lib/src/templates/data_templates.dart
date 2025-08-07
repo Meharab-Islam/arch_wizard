@@ -1,4 +1,5 @@
-String dataModelTemplate(String className, String featureName) => '''
+String dataModelTemplate(String className, String featureName) =>
+    '''
 import '../../domain/entities/$featureName.dart';
 
 /// The data model that extends the domain entity.
@@ -24,12 +25,13 @@ class ${className}Model extends $className {
 }
 ''';
 
-String remoteDataSourceTemplate(String className, String featureName) => '''
+String remoteDataSourceTemplate(String className, String featureName) =>
+    '''
 import '../models/${featureName}_model.dart';
 
 /// The contract for remote data operations.
 abstract class ${className}RemoteDataSource {
-  Future<${className}Model> get${className}(String id);
+  Future<${className}Model> get$className(String id);
 }
 
 /// The implementation of the remote data source.
@@ -38,7 +40,7 @@ class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
   // ${className}RemoteDataSourceImpl({required this.client});
 
   @override
-  Future<${className}Model> get${className}(String id) async {
+  Future<${className}Model> get$className(String id) async {
     // Simulating a network call.
     await Future.delayed(const Duration(seconds: 1));
     return ${className}Model(id: id);
@@ -46,7 +48,8 @@ class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
 }
 ''';
 
-String dataRepoImplTemplate(String className, String featureName) => '''
+String dataRepoImplTemplate(String className, String featureName) =>
+    '''
 import '../../domain/entities/$featureName.dart';
 import '../../domain/repositories/${featureName}_repository.dart';
 import '../datasources/${featureName}_remote_data_source.dart';
@@ -58,7 +61,7 @@ class ${className}RepositoryImpl implements ${className}Repository {
   ${className}RepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<$className> get${className}(String id) async {
+  Future<$className> get$className(String id) async {
     // You can handle mapping from Model to Entity here if they differ.
     final remoteData = await remoteDataSource.get$className(id);
     return remoteData;

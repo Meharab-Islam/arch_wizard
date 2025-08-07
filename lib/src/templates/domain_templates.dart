@@ -1,4 +1,5 @@
-String domainEntityTemplate(String className) => '''
+String domainEntityTemplate(String className) =>
+    '''
 import 'package:equatable/equatable.dart';
 
 class $className extends Equatable {
@@ -13,8 +14,8 @@ class $className extends Equatable {
 }
 ''';
 
-
-String domainRepoTemplate(String className) => '''
+String domainRepoTemplate(String className) =>
+    '''
 // TODO: Add the 'dartz' package to your pubspec.yaml for Either type.
 // TODO: Create a Failure class hierarchy (e.g., core/error/failures.dart).
 // import 'package:dartz/dartz.dart';
@@ -25,11 +26,12 @@ import '../entities/${className.toLowerCase()}.dart';
 abstract class ${className}Repository {
   /// Fetches a [$className] object.
   /// Returns [Either] a [Failure] or the [$className] data.
-  Future< /* Either<Failure,*/ $className> get${className}(String id);
+  Future< /* Either<Failure,*/ $className> get$className(String id);
 }
 ''';
 
-String useCaseTemplate(String className, String featureName) => '''
+String useCaseTemplate(String className, String featureName) =>
+    '''
 // import 'package:dartz/dartz.dart';
 // import 'package:your_app/core/error/failures.dart';
 import '../entities/$featureName.dart';

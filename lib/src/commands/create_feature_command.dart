@@ -7,11 +7,17 @@ class CreateFeatureCommand extends Command<void> {
   @override
   final name = 'create_feature';
   @override
-  final description = 'Creates a new feature with a clean architecture structure.';
+  final description =
+      'Creates a new feature with a clean architecture structure.';
 
   CreateFeatureCommand() {
     argParser
-      ..addOption('name', abbr: 'n', help: 'The name of the feature (e.g., login).', mandatory: true)
+      ..addOption(
+        'name',
+        abbr: 'n',
+        help: 'The name of the feature (e.g., login).',
+        mandatory: true,
+      )
       ..addOption(
         'state',
         abbr: 's',
@@ -24,11 +30,14 @@ class CreateFeatureCommand extends Command<void> {
   @override
   void run() async {
     // Safety Check: Ensure command is run in a Flutter project root.
-    if (!File('pubspec.yaml').existsSync() || !File('pubspec.yaml').readAsStringSync().contains('sdk: flutter')) {
-      logger.err('Error: This command must be run from the root of a Flutter project.');
+    if (!File('pubspec.yaml').existsSync() ||
+        !File('pubspec.yaml').readAsStringSync().contains('sdk: flutter')) {
+      logger.err(
+        'Error: This command must be run from the root of a Flutter project.',
+      );
       exit(1);
     }
-    
+
     final featureName = argResults?['name'] as String;
     final stateManagement = argResults?['state'] as String;
 

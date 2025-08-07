@@ -1,5 +1,6 @@
 // --- Placeholder Page ---
-String pageTemplate(String className) => '''
+String pageTemplate(String className) =>
+    '''
 import 'package:flutter/material.dart';
 
 class ${className}Page extends StatelessWidget {
@@ -20,7 +21,8 @@ class ${className}Page extends StatelessWidget {
 ''';
 
 // --- BLoC Templates ---
-String blocTemplate(String className, String featureName) => '''
+String blocTemplate(String className, String featureName) =>
+    '''
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecases/get_$featureName.dart';
 import '${featureName}_event.dart';
@@ -43,7 +45,8 @@ class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
 }
 ''';
 
-String blocEventTemplate(String className) => '''
+String blocEventTemplate(String className) =>
+    '''
 import 'package:equatable/equatable.dart';
 
 abstract class ${className}Event extends Equatable {
@@ -62,7 +65,8 @@ class Get${className}DetailsEvent extends ${className}Event {
 }
 ''';
 
-String blocStateTemplate(String className) => '''
+String blocStateTemplate(String className) =>
+    '''
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/${className.toLowerCase()}.dart';
 
@@ -95,7 +99,8 @@ class ${className}Error extends ${className}State {
 ''';
 
 // --- GetX Template ---
-String getxControllerTemplate(String className, String featureName) => '''
+String getxControllerTemplate(String className, String featureName) =>
+    '''
 import 'package:get/get.dart';
 import '../../domain/usecases/get_$featureName.dart';
 import '../../domain/entities/$featureName.dart';
@@ -105,14 +110,14 @@ class ${className}Controller extends GetxController {
   ${className}Controller(this._get$className);
 
   var isLoading = true.obs;
-  final ${featureName} = Rxn<$className>();
+  final $featureName = Rxn<$className>();
   var errorMessage = ''.obs;
 
   void fetch${className}Details(String id) async {
     try {
       isLoading(true);
       final result = await _get$className(id);
-      ${featureName}(result);
+      $featureName(result);
     } catch (e) {
       errorMessage(e.toString());
     } finally {
@@ -123,11 +128,13 @@ class ${className}Controller extends GetxController {
 ''';
 
 // --- Riverpod Template ---
-String riverpodTemplate(String className, String featureName) => '''
+String riverpodTemplate(String className, String featureName) =>
+    '''
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
 // TODO: Make sure your GetIt instance is accessible, e.g., import 'path/to/injection_container.dart';
+// TODO: Make sure you have Failure classes and the dartz package for Either.
 
 part '${featureName}_provider.g.dart';
 
@@ -138,14 +145,25 @@ Get$className get${className}UseCase(Get${className}UseCaseRef ref) {
 }
 
 @riverpod
-Future<$className> ${featureName}Details(${className}DetailsRef ref, {required String id}) {
+Future<$className> ${featureName}Details(${className}DetailsRef ref, {required String id}) async {
   final useCase = ref.watch(get${className}UseCaseProvider);
-  return useCase(id);
+  
+  // UPDATED: Handle the Either type for robust error handling.
+  final result = await useCase(id);
+  
+  return result.fold(
+    // On failure, throw an exception. Riverpod's AsyncValue will catch this 
+    // and automatically expose it as an AsyncError state to the UI.
+    (failure) => throw Exception('Error Message from Failure object'),
+    
+    // On success, return the data. This will be exposed as an AsyncData state.
+    (data) => data,
+  );
 }
 ''';
-
 // --- Provider Template ---
-String providerTemplate(String className, String featureName) => '''
+String providerTemplate(String className, String featureName) =>
+    '''
 import 'package:flutter/material.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
@@ -183,23 +201,31 @@ class ${className}Provider extends ChangeNotifier {
 ''';
 
 // --- GetIt Registration Template ---
-String getItRegistrationTemplate(String className, String featureName, String state) {
+String getItRegistrationTemplate(
+  String className,
+  String featureName,
+  String state,
+) {
   String presentationDI;
   switch (state) {
     case 'bloc':
-      presentationDI = 'sl.registerFactory(() => ${className}Bloc(get$className: sl()));';
+      presentationDI =
+          'sl.registerFactory(() => ${className}Bloc(get$className: sl()));';
       break;
     case 'getx':
-      presentationDI = '// For GetX, you register controllers in a Bindings class:\n// Get.lazyPut(() => ${className}Controller(sl()));';
+      presentationDI =
+          '// For GetX, you register controllers in a Bindings class:\n// Get.lazyPut(() => ${className}Controller(sl()));';
       break;
     case 'provider':
       presentationDI = 'sl.registerFactory(() => ${className}Provider(sl()));';
       break;
     case 'riverpod':
-      presentationDI = '// For Riverpod, dependencies are usually injected via ref.watch or other providers.';
+      presentationDI =
+          '// For Riverpod, dependencies are usually injected via ref.watch or other providers.';
       break;
     default:
-      presentationDI = '// No presentation dependency injection snippet for "$state".';
+      presentationDI =
+          '// No presentation dependency injection snippet for "$state".';
   }
 
   return '''

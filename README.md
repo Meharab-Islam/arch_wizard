@@ -1,50 +1,75 @@
-A simple command-line application.
 # Arch Wizard 🧙✨
 
-A powerful CLI tool to scaffold Flutter clean architecture features, boosting productivity and ensuring consistency across your projects.
+[![Pub Version](https://img.shields.io/pub/v/arch_wizard)](https://pub.dev/packages/arch_wizard)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
 
-### **Overview**
-
-`arch_wizard` automates the creation of boilerplate code for features, including domain, data, and presentation layers. It supports BLoC, Riverpod, GetX, and Provider, and can automatically register dependencies with GetIt.
+A powerful and flexible command-line tool to scaffold complete features for your Flutter projects using a clean architecture pattern. Drastically reduce boilerplate and enforce consistency across your team.
 
 
+
+---
+
+### **Features**
+
+-   **Automated Scaffolding**: Generate the entire directory structure for a new feature with a single command.
+-   **Clean Architecture**: Enforces a solid, scalable architecture with a clear separation of layers (Domain, Data, Presentation).
+-   **State Management Support**: Out-of-the-box templates for BLoC, Riverpod, GetX, and Provider.
+-   **Automatic DI Registration**: Automatically injects your new dependencies and imports into a `get_it` service locator file.
+-   **Production-Ready Templates**: Generates code with robust error-handling patterns.
+
+---
 
 ### **Installation**
 
-Activate `arch_wizard` to use it globally from any terminal.
+Activate `arch_wizard` from your terminal to make it available as a system-wide command.
 
 ```bash
 dart pub global activate arch_wizard
 ```
-*(This command will work once the package is published to pub.dev.)*
+
+---
 
 ### **Usage**
 
-1.  **Prepare your project:** In your Flutter project's `get_it` setup file (e.g., `lib/injection_container.dart`), add the marker comment where you want new dependencies to be inserted.
-    ```dart
-    Future<void> init() async {
-      // ... other registrations
-    
-      // [DI_GENERATE_HERE]
-    }
-    ```
-2.  **Run the command:** Navigate to the root of your Flutter project and run the `create_feature` command.
 
-    ```bash
-    arch_wizard create_feature --name user_profile --state riverpod
-    ```
-This will generate the entire feature structure and attempt to update `injection_container.dart` automatically.
+#### **1. Run the Command**
 
-### **Commands**
+Navigate to the root directory of your Flutter project and run the `create_feature` command.
 
-#### `create_feature`
-Creates all the necessary files for a new feature.
+```bash
+arch_wizard create_feature --name <your_feature_name> --state <state_management>
+```
 
-**Options:**
+**Examples:**
 
-- `--name` (or `-n`): **(required)** The name of the feature in snake_case (e.g., `user_profile`).
-- `--state` (or `-s`): The state management solution.
-  - `bloc` (default)
-  - `riverpod`
-  - `getx`
-  - `provider`
+```bash
+# Create a 'login' feature using BLoC
+arch_wizard create_feature --name login --state bloc
+
+# Create a 'cart' feature using Riverpod
+arch_wizard create_feature --name cart --state riverpod
+```
+
+The tool will create all the necessary files in `lib/features/<your_feature_name>/` and update your dependency injection file automatically.
+
+---
+
+### **Command Options**
+
+| Option      | Abbreviation | Description                      | Allowed Values                       | Default |
+|-------------|--------------|----------------------------------|--------------------------------------|---------|
+| `--name`    | `-n`         | The name of the feature.         | (string)                             |         |
+| `--state`   | `-s`         | The state management solution.   | `bloc`, `riverpod`, `getx`, `provider` | `bloc`  |
+
+---
+
+### **Bugs or Requests**
+
+If you encounter any problems, feel free to [open an issue](https://github.com/Meharab-Islam/arch_wizard/issues).
+
+---
+
+### **License**
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

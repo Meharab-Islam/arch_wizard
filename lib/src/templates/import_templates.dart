@@ -13,13 +13,19 @@ String importTemplate(String packageName, String featureName, String state) {
 
   switch (state) {
     case 'bloc':
-      imports.add("import 'package:$packageName/features/$featureName/presentation/$stateDir/${featureName}_bloc.dart';");
+      imports.add(
+        "import 'package:$packageName/features/$featureName/presentation/$stateDir/${featureName}_bloc.dart';",
+      );
       break;
     case 'getx':
-      imports.add("import 'package:$packageName/features/$featureName/presentation/$stateDir/${featureName}_controller.dart';");
+      imports.add(
+        "import 'package:$packageName/features/$featureName/presentation/$stateDir/${featureName}_controller.dart';",
+      );
       break;
     case 'provider':
-      imports.add("import 'package:$packageName/features/$featureName/presentation/$stateDir/${featureName}_provider.dart';");
+      imports.add(
+        "import 'package:$packageName/features/$featureName/presentation/$stateDir/${featureName}_provider.dart';",
+      );
       break;
   }
   return imports.join('\n');
@@ -28,8 +34,11 @@ String importTemplate(String packageName, String featureName, String state) {
 // --- HELPER FUNCTION ---
 String _getStateDirName(String state) {
   switch (state) {
-    case 'getx': return 'controllers';
-    case 'bloc': return 'bloc';
-    default: return 'providers';
+    case 'getx':
+      return 'controllers';
+    case 'bloc':
+      return 'bloc';
+    default:
+      return 'providers';
   }
 }
