@@ -130,36 +130,38 @@ class ${className}Controller extends GetxController {
 // --- Riverpod Template ---
 String riverpodTemplate(String className, String featureName) =>
     '''
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
 // TODO: Make sure your GetIt instance is accessible, e.g., import 'path/to/injection_container.dart';
 // TODO: Make sure you have Failure classes and the dartz package for Either.
 
-part '${featureName}_provider.g.dart';
-
-@riverpod
-Get$className get${className}UseCase(Get${className}UseCaseRef ref) {
-  // Assuming 'sl' is your global GetIt instance
+/// Provides the UseCase from the GetIt service locator.
+/// This allows other providers to access the business logic.
+final get${className}UseCaseProvider = Provider<Get$className>((ref) {
   return sl<Get$className>();
-}
+});
 
-@riverpod
-Future<$className> ${featureName}Details(${className}DetailsRef ref, {required String id}) async {
+/// Fetches the feature details for a given ID.
+///
+/// This is an auto-disposing, family provider.
+/// - `.family` allows you to pass in the 'id'.
+/// - `.autoDispose` automatically cleans up the state when the UI no longer needs it.
+final ${featureName}DetailsProvider = FutureProvider.autoDispose.family<$className, String>((ref, id) async {
   final useCase = ref.watch(get${className}UseCaseProvider);
   
-  // UPDATED: Correctly handles the Either type for robust error handling.
+  // Handle the Either type for robust error handling.
   final result = await useCase(id);
   
   return result.fold(
-    // On failure, throw an exception. Riverpod's AsyncValue will catch this 
-    // and automatically expose it as an AsyncError state to the UI.
+    // On failure, throw an exception. Riverpod will catch this 
+    // and expose it as an error state to the UI.
     (failure) => throw Exception('Error Message from Failure object'),
     
     // On success, return the data.
     (data) => data,
   );
-}
+});
 ''';
 // --- Provider Template ---
 String providerTemplate(String className, String featureName) =>
