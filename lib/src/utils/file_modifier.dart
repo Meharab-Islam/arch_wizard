@@ -4,11 +4,12 @@ import 'package:arch_wizard/src/utils/logger.dart';
 /// A marker to find the injection point in the DI file.
 const String diMarker = '// [DI_GENERATE_HERE]';
 
-Future<void> registerDependencies(String diFilePath, String newRegistrations) async {
+Future<void> registerDependencies(String diFilePath,String import,  String newRegistrations) async {
   final diFile = File(diFilePath);
   if (!await diFile.exists()) {
     logger.warn('Warning: Dependency injection file not found at "$diFilePath".');
     logger.warn('Please add the following registrations manually:');
+    logger.info(import);
     logger.info(newRegistrations);
     return;
   }

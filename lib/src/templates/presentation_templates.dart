@@ -1,3 +1,5 @@
+// FILE: lib/src/templates/presentation_templates.dart
+
 // --- Placeholder Page ---
 String pageTemplate(String className) => '''
 import 'package:flutter/material.dart';
@@ -32,12 +34,14 @@ class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
   ${className}Bloc({required this.get$className}) : super(${className}Initial()) {
     on<Get${className}DetailsEvent>((event, emit) async {
       emit(${className}Loading());
-      try {
-        final data = await get$className(event.id);
-        emit(${className}Loaded(data));
-      } catch (e) {
-        emit(${className}Error(e.toString()));
-      }
+      
+      // UPDATED: Replaced try-catch with .fold() for type-safe error handling.
+      final result = await get$className(event.id);
+      
+      result.fold(
+        (failure) => emit(${className}Error('Error Message from Failure object')),
+        (data) => emit(${className}Loaded(data)),
+      );
     });
   }
 }
@@ -108,13 +112,23 @@ class ${className}Controller extends GetxController {
   final ${featureName} = Rxn<$className>();
   var errorMessage = ''.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    fetch${className}Details('123'); // Example ID
+  }
+
   void fetch${className}Details(String id) async {
     try {
       isLoading(true);
+      
+      // UPDATED: Using .fold() for type-safe error handling.
       final result = await _get$className(id);
-      ${featureName}(result);
-    } catch (e) {
-      errorMessage(e.toString());
+      
+      result.fold(
+        (failure) => errorMessage.value = 'Error Message from Failure object',
+        (data) => ${featureName}.value = data,
+      );
     } finally {
       isLoading(false);
     }
@@ -128,6 +142,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
 // TODO: Make sure your GetIt instance is accessible, e.g., import 'path/to/injection_container.dart';
+// TODO: Make sure you have Failure classes defined.
 
 part '${featureName}_provider.g.dart';
 
@@ -138,9 +153,17 @@ Get$className get${className}UseCase(Get${className}UseCaseRef ref) {
 }
 
 @riverpod
-Future<$className> ${featureName}Details(${className}DetailsRef ref, {required String id}) {
+Future<$className> ${featureName}Details(${className}DetailsRef ref, {required String id}) async {
   final useCase = ref.watch(get${className}UseCaseProvider);
-  return useCase(id);
+  
+  // UPDATED: Handle Either type by throwing an exception on failure,
+  // which Riverpod's AsyncValue.error will catch automatically.
+  final result = await useCase(id);
+  
+  return result.fold(
+    (failure) => throw Exception('Error Message from Failure object'),
+    (data) => data,
+  );
 }
 ''';
 
@@ -169,13 +192,19 @@ class ${className}Provider extends ChangeNotifier {
     _state = ViewState.loading;
     notifyListeners();
     
-    try {
-      _${featureName}Data = await _get$className(id);
-      _state = ViewState.loaded;
-    } catch (e) {
-      _errorMessage = e.toString();
-      _state = ViewState.error;
-    }
+    // UPDATED: Using .fold() for type-safe error handling.
+    final result = await _get$className(id);
+    
+    result.fold(
+      (failure) {
+        _errorMessage = 'Error Message from Failure object';
+        _state = ViewState.error;
+      },
+      (data) {
+        _${featureName}Data = data;
+        _state = ViewState.loaded;
+      },
+    );
     
     notifyListeners();
   }
@@ -190,13 +219,13 @@ String getItRegistrationTemplate(String className, String featureName, String st
       presentationDI = 'sl.registerFactory(() => ${className}Bloc(get$className: sl()));';
       break;
     case 'getx':
-      presentationDI = '// For GetX, you register controllers in a Bindings class:\n// Get.lazyPut(() => ${className}Controller(sl()));';
+      presentationDI = '// For GetX, you register controllers in a Bindings class:\\n// Get.lazyPut(() => ${className}Controller(sl()));';
       break;
     case 'provider':
       presentationDI = 'sl.registerFactory(() => ${className}Provider(sl()));';
       break;
     case 'riverpod':
-      presentationDI = '// For Riverpod, dependencies are usually injected via ref.watch or other providers.';
+      presentationDI = '// For Riverpod, dependencies are usually injected via other providers.';
       break;
     default:
       presentationDI = '// No presentation dependency injection snippet for "$state".';
@@ -205,18 +234,18 @@ String getItRegistrationTemplate(String className, String featureName, String st
   return '''
 // Feature: $className
 //
-// Presentation
+// ${className} Presentation
 $presentationDI
 //
-// Domain
+// ${className} Domain
 sl.registerLazySingleton(() => Get$className(sl()));
 //
-// Data
+// ${className} Data
 sl.registerLazySingleton<${className}Repository>(
   () => ${className}RepositoryImpl(remoteDataSource: sl()),
 );
 sl.registerLazySingleton<${className}RemoteDataSource>(
-  () => ${className}RemoteDataSourceImpl(),
+  () => ${className}RemoteDataSourceImpl(client: sl()),
 );
 ''';
 }
