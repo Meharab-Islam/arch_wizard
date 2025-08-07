@@ -1,3 +1,7 @@
+## 1.0.2
+
+- Update the readme file
+
 ## 1.0.1
 
 - Fixed an issue in the Riverpod template to correctly handle error states and code generation.
