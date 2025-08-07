@@ -7,6 +7,7 @@ const String diMarker = '// [DI_GENERATE_HERE]';
 /// The default content for a newly created injection container file.
 const String diFileTemplate = '''
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 
 // The Arch Wizard will add new import statements right below this line.
 // [IMPORT_GENERATE_HERE]
@@ -14,6 +15,10 @@ import 'package:get_it/get_it.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  //! Core
+  sl.registerLazySingleton(() => http.Client());
+
+  //! Features
   // The Arch Wizard will add new feature dependencies right below this line.
   // [DI_GENERATE_HERE]
 }
@@ -28,11 +33,9 @@ Future<void> registerDependencies(
 ) async {
   final diFile = File(diFilePath);
 
-  // UPDATED: Logic to create the file if it doesn't exist.
   if (!await diFile.exists()) {
     logger.info('File "$diFilePath" not found. Creating it now...');
     try {
-      // Create the file with the default template content.
       await diFile.create(recursive: true);
       await diFile.writeAsString(diFileTemplate);
       logger.success('✅ Created "$diFilePath" successfully.');
@@ -41,7 +44,7 @@ Future<void> registerDependencies(
       );
     } catch (e) {
       logger.err('Failed to create "$diFilePath": $e');
-      return; // Stop execution if file creation fails
+      return;
     }
   }
 
@@ -51,10 +54,7 @@ Future<void> registerDependencies(
 
     // Handle Imports
     if (content.contains(importMarker)) {
-      content = content.replaceFirst(
-        importMarker,
-        '$newImports\n$importMarker',
-      );
+      content = content.replaceFirst(importMarker, '$newImports\n$importMarker');
       modified = true;
     } else {
       logger.warn('Warning: Import marker "$importMarker" not found.');
@@ -69,7 +69,7 @@ Future<void> registerDependencies(
     }
 
     if (modified) {
-      await diFile.writeAsString(content);
+      await diFile.writeAsString(content, flush: true);
       logger.success('✅ Dependencies and imports registered automatically.');
     } else {
       logger.warn('No markers found. Could not auto-inject dependencies.');
