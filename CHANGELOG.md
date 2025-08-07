@@ -1,3 +1,9 @@
+## 1.0.1 
+
+- Added automatic DI file creation.
+- Updated templates with robust error handling.
+
+
 ## 1.0.0
 
 - Initial stable release of Arch Wizard.
