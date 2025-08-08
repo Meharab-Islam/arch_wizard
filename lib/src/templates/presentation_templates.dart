@@ -36,7 +36,6 @@ class ${className}Page extends StatelessWidget {
 /// ------------------------------
 String blocTemplate(String className, String featureName) => '''
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/error/failures.dart';
 import '../../domain/entities/$featureName.dart';
 import '${featureName}_event.dart';
 import '${featureName}_state.dart';
@@ -88,7 +87,6 @@ class Fetch${className}Event extends ${className}Event {}
 /// ------------------------------
 String blocStateTemplate(String className) => '''
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/${className.toLowerCase()}.dart';
 
 abstract class ${className}State extends Equatable {
   const ${className}State();
@@ -123,7 +121,6 @@ class ${className}Error extends ${className}State {
 /// ------------------------------
 String getxControllerTemplate(String className, String featureName) => '''
 import 'package:get/get.dart';
-import '../../../../core/error/failures.dart';
 import '../../domain/entities/$featureName.dart';
 
 /// GetX controller for $className feature.
@@ -158,7 +155,6 @@ class ${className}Controller extends GetxController {
 /// ------------------------------
 String riverpodTemplate(String className, String featureName) => '''
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/error/failures.dart';
 import '../../domain/entities/$featureName.dart';
 
 /// Riverpod provider for $className feature.
@@ -177,7 +173,6 @@ final ${featureName}Provider = FutureProvider.autoDispose<$className>((ref) asyn
 /// ------------------------------
 String providerTemplate(String className, String featureName) => '''
 import 'package:flutter/material.dart';
-import '../../../../core/error/failures.dart';
 import '../../domain/entities/$featureName.dart';
 
 enum ViewState { initial, loading, loaded, error }
