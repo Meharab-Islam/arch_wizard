@@ -224,7 +224,7 @@ String getItRegistrationTemplate(
   switch (state) {
     case 'bloc':
       presentationDI =
-          'sl.registerFactory(() => ${className}Bloc()); // TODO: Add your use case to constructor';
+          'sl.registerFactory(() => ${className}Bloc());';
       break;
     case 'getx':
       presentationDI =
@@ -248,16 +248,14 @@ String getItRegistrationTemplate(
 $presentationDI
 
 // ---------------- Domain ----------------
-// TODO: Register your domain use cases here.
-// sl.registerLazySingleton(() => Get$className(sl()));
+ sl.registerLazySingleton(() => Get$className(sl()));
 
 // ---------------- Data ----------------
-// TODO: Register your repository and data sources here.
-// sl.registerLazySingleton<${className}Repository>(
-//   () => ${className}RepositoryImpl(remoteDataSource: sl()),
-// );
-// sl.registerLazySingleton<${className}RemoteDataSource>(
-//   () => ${className}RemoteDataSourceImpl(),
-// );
+ sl.registerLazySingleton<${className}Repository>(
+   () => ${className}RepositoryImpl(remoteDataSource: sl()),
+ );
+ sl.registerLazySingleton<${className}RemoteDataSource>(
+  () => ${className}RemoteDataSourceImpl(),
+ );
 ''';
 }
