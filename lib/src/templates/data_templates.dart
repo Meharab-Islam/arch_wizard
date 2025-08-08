@@ -124,6 +124,7 @@ import 'package:dartz/dartz.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/repositories/${featureName}_repository.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/failure_mapper.dart';
 import '../datasources/${featureName}_remote_data_source.dart';
 
 
