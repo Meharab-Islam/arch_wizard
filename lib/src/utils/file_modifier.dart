@@ -19,8 +19,27 @@ Future<void> init() async {
 }
 ''';
 
+/// Path for the error log file. You can customize or parametrize this as needed.
+const String errorLogFilePath = 'di_error.log';
+
+/// Writes error messages to the error log file.
+/// Appends the message with a timestamp.
+Future<void> _writeErrorLog(String message) async {
+  final logFile = File(errorLogFilePath);
+  final timestamp = DateTime.now().toIso8601String();
+  final fullMessage = '[$timestamp] $message\n';
+
+  try {
+    await logFile.writeAsString(fullMessage, mode: FileMode.append);
+  } catch (e) {
+    // If writing the log also fails, fallback to console only
+    logger.err('Failed to write to error log file: $e');
+  }
+}
+
 /// Registers both imports and dependencies in the specified DI file.
 /// If the file doesn't exist, it creates it automatically.
+/// Errors during creation or writing will be logged to an error file.
 Future<void> registerDependencies(
   String diFilePath,
   String newImports,
@@ -28,11 +47,10 @@ Future<void> registerDependencies(
 ) async {
   final diFile = File(diFilePath);
 
-  // UPDATED: Logic to create the file if it doesn't exist.
+  // Create the file if it doesn't exist
   if (!await diFile.exists()) {
     logger.info('File "$diFilePath" not found. Creating it now...');
     try {
-      // Create the file with the default template content.
       await diFile.create(recursive: true);
       await diFile.writeAsString(diFileTemplate);
       logger.success('✅ Created "$diFilePath" successfully.');
@@ -40,7 +58,9 @@ Future<void> registerDependencies(
         'Please remember to call the init() function in your main.dart file!',
       );
     } catch (e) {
-      logger.err('Failed to create "$diFilePath": $e');
+      final errorMessage = 'Failed to create "$diFilePath": $e';
+      logger.err(errorMessage);
+      await _writeErrorLog(errorMessage);
       return; // Stop execution if file creation fails
     }
   }
@@ -75,6 +95,8 @@ Future<void> registerDependencies(
       logger.warn('No markers found. Could not auto-inject dependencies.');
     }
   } catch (e) {
-    logger.err('Failed to write to DI file: $e');
+    final errorMessage = 'Failed to write to DI file: $e';
+    logger.err(errorMessage);
+    await _writeErrorLog(errorMessage);
   }
 }

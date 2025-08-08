@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:arch_wizard/src/templates/failure_templates.dart';
 import 'package:arch_wizard/src/templates/import_templates.dart';
 
 import '../templates/domain_templates.dart';
@@ -7,6 +8,24 @@ import '../templates/presentation_templates.dart';
 import '../utils/file_modifier.dart';
 import '../utils/logger.dart';
 
+/// Path for feature generation error log
+const String featureErrorLogPath = 'feature_generation_error.log';
+
+/// Writes an error message with timestamp to the error log file.
+/// Appends to existing file or creates a new one.
+Future<void> _writeErrorLog(String message) async {
+  final logFile = File(featureErrorLogPath);
+  final timestamp = DateTime.now().toIso8601String();
+  final fullMessage = '[$timestamp] $message\n';
+
+  try {
+    await logFile.writeAsString(fullMessage, mode: FileMode.append);
+  } catch (e) {
+    // If writing the log fails, fallback to console only
+    logger.err('Failed to write to feature error log file: $e');
+  }
+}
+
 /// The main orchestrator for generating a new feature.
 Future<void> generateFeature(String name, String state) async {
   final featureName = name.toLowerCase();
@@ -14,9 +33,14 @@ Future<void> generateFeature(String name, String state) async {
 
   final packageName = await _getPackageName();
   if (packageName == null) {
-    logger.err('Could not find package name in pubspec.yaml. Aborting.');
+    const msg = 'Could not find package name in pubspec.yaml. Aborting.';
+    logger.err(msg);
+    await _writeErrorLog(msg);
     exit(1);
   }
+
+  // Generate core failure files (once)
+  await _generateCoreFailures();
 
   // Define paths
   final featureDir = 'lib/features/$featureName';
@@ -60,6 +84,25 @@ Future<void> generateFeature(String name, String state) async {
     imports,
     registrations,
   );
+}
+
+/// Creates core failure handling files if they don't already exist.
+Future<void> _generateCoreFailures() async {
+  const baseDir = 'lib/core/error';
+
+  await _createDirs([baseDir]);
+
+  final failureFile = File('$baseDir/failures.dart');
+  if (!await failureFile.exists()) {
+    await failureFile.writeAsString(failureTemplate());
+    logger.detail('  ✓ Created $baseDir/failures.dart');
+  }
+
+  final mapperFile = File('$baseDir/failure_mapper.dart');
+  if (!await mapperFile.exists()) {
+    await mapperFile.writeAsString(failureMapperTemplate());
+    logger.detail('  ✓ Created $baseDir/failure_mapper.dart');
+  }
 }
 
 /// Creates all files for the Domain layer.
@@ -148,6 +191,11 @@ Future<void> _generatePresentationLayer(
         providerTemplate(className, featureName),
       );
       break;
+    default:
+      final msg = 'Unknown state management "$state" provided.';
+      logger.err(msg);
+      await _writeErrorLog(msg);
+      break;
   }
   // Also create the main page file for the feature
   await _createFile(
@@ -175,7 +223,13 @@ Future<String?> _getPackageName() async {
 
 Future<void> _createDirs(List<String> dirs) async {
   for (final dir in dirs) {
-    await Directory(dir).create(recursive: true);
+    try {
+      await Directory(dir).create(recursive: true);
+    } catch (e) {
+      final msg = 'Failed to create directory "$dir": $e';
+      logger.err(msg);
+      await _writeErrorLog(msg);
+    }
   }
 }
 
@@ -185,7 +239,9 @@ Future<void> _createFile(String path, String content) async {
     // Provide detailed feedback to the user for each created file.
     logger.detail('  ✓ Created $path');
   } catch (e) {
-    logger.err('Failed to create file $path: $e');
+    final msg = 'Failed to create file $path: $e';
+    logger.err(msg);
+    await _writeErrorLog(msg);
   }
 }
 
@@ -202,3 +258,5 @@ String _getStateDirName(String state) {
 
 String _capitalize(String s) =>
     s.isEmpty ? '' : s[0].toUpperCase() + s.substring(1);
+
+/// Failure template string for failure class (lib/core/error/failures.dart)
