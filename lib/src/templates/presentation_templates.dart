@@ -66,7 +66,8 @@ class ${className}Page extends StatelessWidget {
 String blocTemplate(String className, String featureName) => '''
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dartz/dartz.dart';
-import '../../core/error/failures.dart';
+import '../../../../core/error/failures.dart';
+import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
 import '${featureName}_event.dart';
 import '${featureName}_state.dart';

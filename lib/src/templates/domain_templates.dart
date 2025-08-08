@@ -23,7 +23,7 @@ class $className extends Equatable {
 
 String domainRepoTemplate(String className) => '''
 import 'package:dartz/dartz.dart';
-import 'package:your_app/core/error/failures.dart';
+import '../../../../core/error/failures.dart';
 import '../entities/${className.toLowerCase()}.dart';
 
 /// Abstract repository defining [$className] data operations.
@@ -42,7 +42,7 @@ abstract class ${className}Repository {
 
 String useCaseTemplate(String className, String featureName) => '''
 import 'package:dartz/dartz.dart';
-import 'package:your_app/core/error/failures.dart';
+import '../../../../core/error/failures.dart';
 import '../entities/$featureName.dart';
 import '../repositories/${featureName}_repository.dart';
 
