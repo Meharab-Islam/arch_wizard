@@ -2,39 +2,18 @@
 /// Presentation Layer Templates
 /// Author: Meharab Islam Nibir
 /// Description:
-///   Templates for creating Flutter presentation layer components
-///   supporting multiple state management options:
-///     - Stateless placeholder page
-///     - BLoC (with Failure handling)
-///     - GetX Controller
-///     - Riverpod Provider
-///     - ChangeNotifier Provider
-///     - GetIt dependency injection registration
-///
-/// How to Use:
-///   1. Generate your desired template by calling the respective function.
-///   2. Place the generated Dart file in the proper presentation folder:
-///        - presentation/pages/
-///        - presentation/bloc/
-///        - presentation/controllers/
-///        - presentation/providers/
-///   3. Update imports and feature/class names accordingly.
-///   4. Connect with your domain layer use cases and entities.
+///   Generic templates for Flutter presentation components.
+///   Includes guidance comments instead of actual API calls.
 /// =============================================================
 
 /// ------------------------------
 /// Placeholder Page Template
 /// ------------------------------
-/// Usage:
-///   - Quick scaffold for a feature page.
-/// Customization:
-///   - Replace UI widget with your actual design.
-///   - Integrate your state management logic here.
-/// ------------------------------
 String pageTemplate(String className) => '''
 import 'package:flutter/material.dart';
 
 /// Placeholder page for the $className feature.
+/// Customize this page as needed.
 class ${className}Page extends StatelessWidget {
   const ${className}Page({super.key});
 
@@ -45,7 +24,7 @@ class ${className}Page extends StatelessWidget {
         title: const Text('$className'),
       ),
       body: const Center(
-        child: Text('$className Feature Page - Connect your state management here!'),
+        child: Text('$className Feature Page - Customize your UI and state management here!'),
       ),
     );
   }
@@ -55,59 +34,40 @@ class ${className}Page extends StatelessWidget {
 /// ------------------------------
 /// BLoC Template
 /// ------------------------------
-/// Usage:
-///   - For features using flutter_bloc package.
-///   - Place in presentation/bloc/
-/// Customization:
-///   - Replace `Get$className` with your actual use case class.
-///   - Add extra events and states as needed.
-///   - Make sure to handle Either<Failure, Entity> in the use case.
-/// ------------------------------
 String blocTemplate(String className, String featureName) => '''
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/$featureName.dart';
-import '../../domain/usecases/get_$featureName.dart';
 import '${featureName}_event.dart';
 import '${featureName}_state.dart';
 
+/// BLoC for $className feature.
+/// Customize the event handlers and add your API/use case calls.
 class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
-  final Get$className get$className;
+  // Inject your UseCases here via constructor
+  // final YourUseCase yourUseCase;
 
-  ${className}Bloc({required this.get$className}) : super(${className}Initial()) {
-    on<Get${className}DetailsEvent>((event, emit) async {
+  ${className}Bloc() : super(${className}Initial()) {
+    on<${className}Event>((event, emit) async {
       emit(${className}Loading());
-      final Either<Failure, $className> failureOrData = await get$className(event.id);
+      
+      // TODO: Add your API/use case call logic here.
+      try {
+        // final data = await yourUseCase.call(...);
+        // emit(${className}Loaded(data));
 
-      failureOrData.fold(
-        (failure) => emit(${className}Error(_mapFailureToMessage(failure))),
-        (data) => emit(${className}Loaded(data)),
-      );
+        // Placeholder: emit loaded with no data.
+        emit(${className}Loaded(/* pass your data here */));
+      } catch (error) {
+        emit(${className}Error('Failed to fetch data. Customize this message.'));
+      }
     });
-  }
-
-  /// Map Failure types to user-friendly messages.
-  String _mapFailureToMessage(Failure failure) {
-    switch (failure.runtimeType) {
-      case ServerFailure:
-        return 'Server error occurred. Please try again later.';
-      case CacheFailure:
-        return 'Cache error occurred. Please try again later.';
-      default:
-        return 'Unexpected error occurred. Please try again.';
-    }
   }
 }
 ''';
 
 /// ------------------------------
 /// BLoC Event Template
-/// ------------------------------
-/// Usage:
-///   - Defines the events that trigger state changes in BLoC.
-/// Customization:
-///   - Add other events specific to your feature if needed.
 /// ------------------------------
 String blocEventTemplate(String className) => '''
 import 'package:equatable/equatable.dart';
@@ -119,23 +79,12 @@ abstract class ${className}Event extends Equatable {
   List<Object> get props => [];
 }
 
-/// Event to fetch details for a specific $className by ID.
-class Get${className}DetailsEvent extends ${className}Event {
-  final String id;
-  const Get${className}DetailsEvent(this.id);
-
-  @override
-  List<Object> get props => [id];
-}
+/// Example event to fetch data. Customize or add more events as needed.
+class Fetch${className}Event extends ${className}Event {}
 ''';
 
 /// ------------------------------
 /// BLoC State Template
-/// ------------------------------
-/// Usage:
-///   - Represents different states of the BLoC lifecycle.
-/// Customization:
-///   - Add more states if your feature requires.
 /// ------------------------------
 String blocStateTemplate(String className) => '''
 import 'package:equatable/equatable.dart';
@@ -148,22 +97,18 @@ abstract class ${className}State extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Initial state before any action.
 class ${className}Initial extends ${className}State {}
 
-/// Loading state while waiting for data.
 class ${className}Loading extends ${className}State {}
 
-/// Loaded state with successful data.
 class ${className}Loaded extends ${className}State {
-  final $className data;
+  final dynamic data; // Replace dynamic with your actual data type
   const ${className}Loaded(this.data);
 
   @override
   List<Object?> get props => [data];
 }
 
-/// Error state with error message.
 class ${className}Error extends ${className}State {
   final String message;
   const ${className}Error(this.message);
@@ -176,53 +121,33 @@ class ${className}Error extends ${className}State {
 /// ------------------------------
 /// GetX Controller Template
 /// ------------------------------
-/// Usage:
-///   - For features using GetX state management.
-///   - Place in presentation/controllers/
-/// Customization:
-///   - Replace $featureName with your lowercase entity name.
-///   - Extend reactive variables as needed.
-/// ------------------------------
 String getxControllerTemplate(String className, String featureName) => '''
 import 'package:get/get.dart';
 import '../../../../core/error/failures.dart';
-import '../../domain/usecases/get_$featureName.dart';
 import '../../domain/entities/$featureName.dart';
 
+/// GetX controller for $className feature.
+/// Customize fetch methods and state management as needed.
 class ${className}Controller extends GetxController {
-  final Get$className _get$className;
-  ${className}Controller(this._get$className);
-
-  var isLoading = true.obs;
-  final $featureName = Rxn<$className>();
+  var isLoading = false.obs;
+  var data = Rxn<$className>();
   var errorMessage = ''.obs;
 
-  /// Fetch details of $className by ID.
-  void fetch${className}Details(String id) async {
+  /// Example fetch method. Replace with your actual API or use case call.
+  void fetchData() async {
+    isLoading.value = true;
+    errorMessage.value = '';
+    
     try {
-      isLoading(true);
-      final result = await _get$className(id);
-      // Assuming result is Either<Failure, Entity>
-      result.fold(
-        (failure) => errorMessage(_mapFailureToMessage(failure)),
-        (data) => $featureName(data),
-      );
-    } catch (e) {
-      errorMessage(e.toString());
-    } finally {
-      isLoading(false);
-    }
-  }
+      // TODO: Call your API or use case here
+      // data.value = await yourUseCase.call(...);
 
-  /// Map failure to user-friendly message.
-  String _mapFailureToMessage(failure) {
-    switch (failure.runtimeType) {
-      case ServerFailure:
-        return 'Server error occurred. Please try again later.';
-      case CacheFailure:
-        return 'Cache error occurred. Please try again later.';
-      default:
-        return 'Unexpected error occurred. Please try again.';
+      // Placeholder data value (null)
+      data.value = null;
+    } catch (e) {
+      errorMessage.value = 'Error fetching data. Customize this message.';
+    } finally {
+      isLoading.value = false;
     }
   }
 }
@@ -231,107 +156,64 @@ class ${className}Controller extends GetxController {
 /// ------------------------------
 /// Riverpod Provider Template
 /// ------------------------------
-/// Usage:
-///   - For features using Riverpod.
-///   - Place in presentation/providers/
-/// Customization:
-///   - Replace $featureName with lowercase entity name.
-///   - Adjust error messages and handling as needed.
-/// ------------------------------
 String riverpodTemplate(String className, String featureName) => '''
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/$featureName.dart';
-import '../../domain/usecases/get_$featureName.dart';
-import '../../../../injection_container.dart';
 
-/// Provides the UseCase from GetIt service locator.
-final get${className}UseCaseProvider = Provider<Get$className>((ref) {
-  return sl<Get$className>();
+/// Riverpod provider for $className feature.
+/// Customize the async provider with your API or use case call.
+final ${featureName}Provider = FutureProvider.autoDispose<$className>((ref) async {
+  // TODO: Fetch data here using your use case or repository
+  // Example: return await ref.read(yourUseCaseProvider).call(...);
+
+  // Placeholder: return null or throw an error as needed
+  throw UnimplementedError('Implement data fetching logic');
 });
-
-/// Async provider to fetch $className details by ID.
-final ${featureName}DetailsProvider =
-    FutureProvider.autoDispose.family<Either<Failure, $className>, String>((ref, id) async {
-  final useCase = ref.watch(get${className}UseCaseProvider);
-  return await useCase(id);
-});
-
-/// Extension method to convert Either<Failure, T> to user-friendly message or data.
-/// Use `.when` on your UI layer to handle loading, error, or data states.
 ''';
 
 /// ------------------------------
 /// ChangeNotifier Provider Template
 /// ------------------------------
-/// Usage:
-///   - For features using ChangeNotifier Provider.
-///   - Place in presentation/providers/
-/// ------------------------------
 String providerTemplate(String className, String featureName) => '''
 import 'package:flutter/material.dart';
-import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
-import '../../core/error/failures.dart';
 import '../../domain/entities/$featureName.dart';
-import '../../domain/usecases/get_$featureName.dart';
 
 enum ViewState { initial, loading, loaded, error }
 
 class ${className}Provider extends ChangeNotifier {
-  final Get$className _get$className;
-  ${className}Provider(this._get$className);
-
-  var _state = ViewState.initial;
+  ViewState _state = ViewState.initial;
   ViewState get state => _state;
 
-  Either<Failure, $className>? _${featureName}Data;
-  Either<Failure, $className>? get ${featureName}Data => _${featureName}Data;
+  $className? data;
+  String errorMessage = '';
 
-  String _errorMessage = '';
-  String get errorMessage => _errorMessage;
-
-  /// Fetch details for $className by ID.
-  Future<void> fetch${className}Details(String id) async {
+  /// Fetch data method - customize this with your API call or use case.
+  Future<void> fetchData() async {
     _state = ViewState.loading;
     notifyListeners();
 
-    final result = await _get$className(id);
-    result.fold(
-      (failure) {
-        _errorMessage = _mapFailureToMessage(failure);
-        _state = ViewState.error;
-      },
-      (data) {
-        _${featureName}Data = Right(data);
-        _state = ViewState.loaded;
-      },
-    );
+    try {
+      // TODO: Call your API/use case here
+      // Example:
+      // data = await yourUseCase.call(...);
+
+      // Placeholder data
+      data = null;
+      _state = ViewState.loaded;
+    } catch (e) {
+      errorMessage = 'Error occurred. Customize this message.';
+      _state = ViewState.error;
+    }
 
     notifyListeners();
-  }
-
-  /// Map failure to user-friendly message.
-  String _mapFailureToMessage(Failure failure) {
-    switch (failure.runtimeType) {
-      case ServerFailure:
-        return 'Server error occurred. Please try again later.';
-      case CacheFailure:
-        return 'Cache error occurred. Please try again later.';
-      default:
-        return 'Unexpected error occurred. Please try again.';
-    }
   }
 }
 ''';
 
 /// ------------------------------
 /// GetIt Dependency Injection Registration Template
-/// ------------------------------
-/// Usage:
-///   - Add these registrations to your injection_container.dart
-///   - Adjust registrations as per your state management approach.
 /// ------------------------------
 String getItRegistrationTemplate(
   String className,
@@ -342,22 +224,21 @@ String getItRegistrationTemplate(
   switch (state) {
     case 'bloc':
       presentationDI =
-          'sl.registerFactory(() => ${className}Bloc(get$className: sl()));';
+          'sl.registerFactory(() => ${className}Bloc()); // TODO: Add your use case to constructor';
       break;
     case 'getx':
       presentationDI =
-          '// For GetX, register controllers in Bindings:\n// Get.lazyPut(() => ${className}Controller(sl()));';
+          '// For GetX, register controllers in Bindings:\n// Get.lazyPut(() => ${className}Controller());';
       break;
     case 'provider':
-      presentationDI = 'sl.registerFactory(() => ${className}Provider(sl()));';
+      presentationDI = 'sl.registerFactory(() => ${className}Provider());';
       break;
     case 'riverpod':
       presentationDI =
-          '// For Riverpod, dependencies are injected via ref.watch() or providers.';
+          '// For Riverpod, dependencies are injected via providers.';
       break;
     default:
-      presentationDI =
-          '// No presentation DI snippet for "$state".';
+      presentationDI = '// No presentation DI snippet for "$state".';
   }
 
   return '''
@@ -367,14 +248,16 @@ String getItRegistrationTemplate(
 $presentationDI
 
 // ---------------- Domain ----------------
-sl.registerLazySingleton(() => Get$className(sl()));
+// TODO: Register your domain use cases here.
+// sl.registerLazySingleton(() => Get$className(sl()));
 
 // ---------------- Data ----------------
-sl.registerLazySingleton<${className}Repository>(
-  () => ${className}RepositoryImpl(remoteDataSource: sl()),
-);
-sl.registerLazySingleton<${className}RemoteDataSource>(
-  () => ${className}RemoteDataSourceImpl(),
-);
+// TODO: Register your repository and data sources here.
+// sl.registerLazySingleton<${className}Repository>(
+//   () => ${className}RepositoryImpl(remoteDataSource: sl()),
+// );
+// sl.registerLazySingleton<${className}RemoteDataSource>(
+//   () => ${className}RemoteDataSourceImpl(),
+// );
 ''';
 }

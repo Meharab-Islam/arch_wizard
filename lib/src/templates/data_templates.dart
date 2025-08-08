@@ -1,66 +1,49 @@
 /// =============================================================
 /// Clean Architecture Code Generation Templates
 /// Author: Meharab Islam Nibir
-/// 
+///
 /// Description:
-///   This file provides **ready-to-use, customizable** string
-///   templates for quickly scaffolding:
-///     1. Data Models
-///     2. Remote Data Sources
-///     3. Repository Implementations
-/// 
-///   These templates are designed to work with:
-///     - REST API (Dio, http, Chopper, etc.)
-///     - Firebase Firestore/Realtime Database
-///     - Local Storage (Hive, SQflite)
-/// 
-///   They follow Clean Architecture principles and support
-///   Either<Failure, Entity> error handling.
+///   These templates scaffold Data Models, Remote Data Sources,
+///   and Repository Implementations following Clean Architecture.
+///   They support Either<Failure, Entity> error handling.
 ///
 /// How to use:
-///   1. Replace `className` with the **PascalCase** name of your entity.
-///      Example: `User`
-///   2. Replace `featureName` with the **snake_case** or lowercase feature name.
-///      Example: `user`
-///   3. Adjust fields, fromJson/toJson, and data source logic as needed.
+///   1. Replace `className` with the PascalCase entity name (e.g., User).
+///   2. Replace `featureName` with lowercase or snake_case feature name (e.g., user).
+///   3. Customize fields, fromJson/toJson, and data source logic as needed.
 /// =============================================================
 
 /// =============================================================
 /// Data Model Template
 /// =============================================================
-/// 
-/// Purpose:
-///   Represents the API/Firebase data format but extends the
-///   domain entity so that you can pass it into the domain layer
-///   without extra conversion.
-/// 
-/// Customization Points:
-///   - Add fields that match your backend response.
-///   - Update `fromJson` and `toJson` mappings accordingly.
-/// -------------------------------------------------------------
 String dataModelTemplate(String className, String featureName) => '''
 import '../../domain/entities/$featureName.dart';
 
-/// Data model for [$className] extending the domain entity.
+/// Data model for [$className], extending the domain entity.
+/// 
+/// TODO:
+/// - Add all relevant fields matching your backend data.
+/// - Update fromJson/toJson methods for serialization.
+/// - You can add helper methods if needed.
 class ${className}Model extends $className {
   const ${className}Model({
     required super.id,
-    // Add other entity fields here...
+    // TODO: Add other fields here as required.
   });
 
-  /// Creates a model from JSON.
+  /// Creates a model from a JSON map.
   factory ${className}Model.fromJson(Map<String, dynamic> json) {
     return ${className}Model(
       id: json['id'] as String,
-      // Map other fields here...
+      // TODO: Map other fields from JSON here.
     );
   }
 
-  /// Converts model to JSON.
+  /// Converts the model to JSON.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      // Add other mappings here...
+      // TODO: Add other fields here.
     };
   }
 }
@@ -69,37 +52,34 @@ class ${className}Model extends $className {
 /// =============================================================
 /// Remote Data Source Template
 /// =============================================================
-/// 
-/// Purpose:
-///   Acts as the single source of truth for **remote** data.
-///   Can be connected to REST APIs, Firebase, or GraphQL.
-/// 
-/// Notes:
-///   - Always return **models**, not entities.
-///   - The repository will decide how to handle data.
-///   - Implement caching or retry logic here if needed.
-/// -------------------------------------------------------------
 String remoteDataSourceTemplate(String className, String featureName) => '''
 import '../models/${featureName}_model.dart';
 
-/// Contract for remote operations of [$className].
+/// Abstract remote data source contract for [$className].
+/// 
+/// TODO:
+/// - Implement this interface with your actual API or Firebase calls.
+/// - This layer should return Data Models, not domain entities.
+/// - You can add caching or retry logic here if needed.
 abstract class ${className}RemoteDataSource {
+  /// Fetch a [$className] model by ID from remote source.
   Future<${className}Model> get$className(String id);
 }
 
 class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
-  // Example for REST:
+  // Example: Uncomment and inject your API client, e.g., Dio
   // final Dio dio;
   // ${className}RemoteDataSourceImpl(this.dio);
 
   @override
   Future<${className}Model> get$className(String id) async {
-    // TODO: Replace with actual API/Firebase call
-    // Example for REST:
+    // TODO: Replace this with actual API or Firebase logic
+    // Example for REST API:
     // final response = await dio.get('/$featureName/\$id');
     // return ${className}Model.fromJson(response.data);
 
-    await Future.delayed(const Duration(seconds: 1)); // Simulated delay
+    // Simulated delay & dummy return for scaffold
+    await Future.delayed(const Duration(seconds: 1));
     return ${className}Model(id: id);
   }
 }
@@ -108,17 +88,6 @@ class ${className}RemoteDataSourceImpl implements ${className}RemoteDataSource {
 /// =============================================================
 /// Repository Implementation Template
 /// =============================================================
-/// 
-/// Purpose:
-///   Bridges the **domain** and **data** layers.
-///   Converts model results into entities and wraps them inside
-///   Either<Failure, Entity> for error handling.
-/// 
-/// Notes:
-///   - Inject the remote data source.
-///   - Handle exceptions and map them to Failure.
-///   - Add caching, offline-first logic if needed.
-/// -------------------------------------------------------------
 String dataRepoImplTemplate(String className, String featureName) => '''
 import 'package:dartz/dartz.dart';
 import '../../domain/entities/$featureName.dart';
@@ -127,7 +96,12 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/failure_mapper.dart';
 import '../datasources/${featureName}_remote_data_source.dart';
 
-
+/// Repository implementation for [$className].
+///
+/// This bridges domain and data layers:
+/// - Fetches data from remote data source,
+/// - Converts models to entities,
+/// - Wraps results inside Either<Failure, Entity>.
 class ${className}RepositoryImpl implements ${className}Repository {
   final ${className}RemoteDataSource remoteDataSource;
 
@@ -137,9 +111,14 @@ class ${className}RepositoryImpl implements ${className}Repository {
   Future<Either<Failure, $className>> get$className(String id) async {
     try {
       final remoteData = await remoteDataSource.get$className(id);
+
+      // NOTE:
+      // If your model extends your entity, you can return directly.
+      // Otherwise, convert the model to the domain entity here.
       return Right(remoteData);
+
     } catch (e) {
-      // Use FailureMapper to convert exception to a Failure instance
+      // Use FailureMapper to convert exceptions to Failure objects.
       Failure failure;
       if (e is Exception) {
         failure = FailureMapper.mapExceptionToFailure(e);
@@ -150,5 +129,4 @@ class ${className}RepositoryImpl implements ${className}Repository {
     }
   }
 }
-
 ''';
