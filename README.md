@@ -15,11 +15,13 @@ Save time, reduce boilerplate, and maintain consistency across your projects and
 
 ## ✨ Key Features
 
-* **Full Feature Scaffolding:** Generate complete feature folders with domain, data, and presentation layers in a single command.
-* **Clean Architecture Enforced:** Clear separation between layers, making your app scalable and maintainable.
-* **Multi-State Management Support:** Choose from `BLoC`, `Riverpod`, `GetX`, or `Provider` for your presentation layer.
-* **Automatic Dependency Injection (DI):** Your new feature’s dependencies and imports are seamlessly registered in your `get_it` service locator file.
-* **Production-Ready Templates:** Includes robust error handling, clear comments, and easy customization.
+- **Automated Scaffolding**: Generate a complete feature with domain, data, and presentation layers using a single command.
+- **Clean Architecture Enforcement**: Keep your code modular and maintainable.
+- **Supports Multiple State Management Solutions**: BLoC, Riverpod, GetX, Provider.
+- **Automatic Dependency Injection Registration**: Seamlessly update your `get_it` setup.
+- **Production-Ready Templates**: Includes robust error handling and architecture best practices.
+- **Automatic Global Failure Classes Generation**: When creating a feature, Arch Wizard **automatically creates the global `Failure` classes and `FailureMapper`** files (if they don't exist) in your project’s `lib/core/error/` directory.  
+  This ensures consistent and reusable error handling across your entire app without manual setup.
 
 ---
 
