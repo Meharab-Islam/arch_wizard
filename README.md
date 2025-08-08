@@ -1,81 +1,108 @@
-# Arch Wizard 🧙✨
+# Arch Wizard 🧙‍♂️✨
 
 [![Pub Version](https://img.shields.io/pub/v/arch_wizard)](https://pub.dev/packages/arch_wizard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
-
-A powerful and flexible command-line tool to scaffold complete features for your Flutter projects using a clean architecture pattern. Drastically reduce boilerplate and enforce consistency across your team.
-
-
+[![Style: Very Good Analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
 
 ---
 
-### **Features**
+## Effortless Flutter Feature Scaffolding with Clean Architecture
 
--   **Automated Scaffolding**: Generate the entire directory structure for a new feature with a single command.
--   **Clean Architecture**: Enforces a solid, scalable architecture with a clear separation of layers (Domain, Data, Presentation).
--   **State Management Support**: Out-of-the-box templates for `BLoC`, `Riverpod`, `GetX`, and `Provider`.
--   **Automatic DI Registration**: Automatically injects your new dependencies and imports into a `get_it` service locator file.
--   **Production-Ready Templates**: Generates code with robust error-handling patterns.
+Arch Wizard is a powerful, flexible **command-line tool** designed to **automate the creation of entire feature modules** for Flutter apps — structured according to clean architecture principles.
+Save time, reduce boilerplate, and maintain consistency across your projects and teams.
 
 ---
 
-### **Installation**
+## ✨ Key Features
 
-Activate `arch_wizard` from your terminal to make it available as a system-wide command.
+* **Full Feature Scaffolding:** Generate complete feature folders with domain, data, and presentation layers in a single command.
+* **Clean Architecture Enforced:** Clear separation between layers, making your app scalable and maintainable.
+* **Multi-State Management Support:** Choose from `BLoC`, `Riverpod`, `GetX`, or `Provider` for your presentation layer.
+* **Automatic Dependency Injection (DI):** Your new feature’s dependencies and imports are seamlessly registered in your `get_it` service locator file.
+* **Production-Ready Templates:** Includes robust error handling, clear comments, and easy customization.
+
+---
+
+## 🚀 Installation
+
+Install Arch Wizard globally via Dart's pub tool to use it anywhere:
 
 ```bash
 dart pub global activate arch_wizard
 ```
 
+Ensure your PATH includes pub global executables, so the command `arch_wizard` is recognized.
+
 ---
 
-### **Usage**
+## 🛠 Usage
 
+### Step 1: Run the Feature Creation Command
 
-#### **1. Run the Command**
-
-Navigate to the root directory of your Flutter project and run the `create_feature` command.
+From the root of your Flutter project, run:
 
 ```bash
-arch_wizard create_feature --name <your_feature_name> --state <state_management>
+arch_wizard create_feature --name <feature_name> --state <state_management>
 ```
 
-**Examples:**
+Replace `<feature_name>` with your desired feature name (e.g., `login`).
+Choose your preferred state management from `bloc`, `riverpod`, `getx`, or `provider`.
+
+---
+
+### Step 2: Example Commands
 
 ```bash
-# Create a 'login' feature using BLoC
+# Generate a Login feature using BLoC
 arch_wizard create_feature --name login --state bloc
 
-# Create a 'login' feature using Riverpod
-arch_wizard create_feature --name login --state riverpod
+# Generate a Product feature using Riverpod
+arch_wizard create_feature --name product --state riverpod
 
-# Create a 'login' feature using Riverpod
-arch_wizard create_feature --name login --state getx
+# Generate a Profile feature using GetX
+arch_wizard create_feature --name profile --state getx
 
-# Create a 'login' feature using Riverpod
-arch_wizard create_feature --name login --state provider
+# Generate a Cart feature using Provider
+arch_wizard create_feature --name cart --state provider
 ```
 
-The tool will create all the necessary files in `lib/features/<your_feature_name>/` and update your dependency injection file automatically.
+---
+
+### Step 3: What Happens?
+
+* Creates the full directory structure inside:
+  `lib/features/<feature_name>/`
+* Generates domain, data, and presentation files with appropriate templates.
+* Automatically updates your DI file (e.g., `lib/injection_container.dart`) with new imports and registrations.
 
 ---
 
-### **Command Options**
+## ⚙️ Command Options
 
-| Option      | Abbreviation | Description                      | Allowed Values                       | Default |
-|-------------|--------------|----------------------------------|--------------------------------------|---------|
-| `--name`    | `-n`         | The name of the feature.         | (string)                             |         |
-| `--state`   | `-s`         | The state management solution.   | `bloc`, `riverpod`, `getx`, `provider` | `bloc`  |
-
----
-
-### **Bugs or Requests**
-
-If you encounter any problems, feel free to [open an issue](https://github.com/Meharab-Islam/arch_wizard/issues).
+| Option    | Alias | Description                   | Allowed Values                         | Default |
+| --------- | ----- | ----------------------------- | -------------------------------------- | ------- |
+| `--name`  | `-n`  | Name of the feature to create | Any valid string (e.g., `login`)       | —       |
+| `--state` | `-s`  | State management approach     | `bloc`, `riverpod`, `getx`, `provider` | `bloc`  |
 
 ---
 
-### **License**
+## 💡 Tips for Customization
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+* Generated templates include clear comments and `TODO`s to guide you customizing API calls, UI, and business logic.
+* Supports multi-layer clean architecture, so you can replace or extend any layer independently.
+* Easily integrate with your existing codebase by following the generated file and folder structure.
+
+---
+
+## 📜 License
+
+Arch Wizard is open source software licensed under the **MIT License**. See the LICENSE file for details.
+
+---
+
+### Happy coding! 🎉
+
+Build clean, scalable Flutter apps faster with Arch Wizard.
+
+---
+

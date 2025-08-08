@@ -1,7 +1,7 @@
 name: arch_wizard
-version: 1.0.2
+version: 1.0.3
 description: A powerful CLI tool to scaffold Flutter clean architecture features...
-repository: https://github.com/Meharab-Islam/arch_wizard.git
+# repository: https://github.com/Meharab-Islam/arch_wizard.git
 # repository: https://github.com/my_org/my_repo
 
 environment:
