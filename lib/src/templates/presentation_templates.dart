@@ -57,7 +57,7 @@ class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
         // emit(${className}Loaded(data));
 
         // Placeholder: emit loaded with no data.
-        emit(${className}Loaded(/* pass your data here */));
+        emit(${className}Loaded(/* pass your data here */"pass your data here"));
       } catch (error) {
         emit(${className}Error('Failed to fetch data. Customize this message.'));
       }
