@@ -123,8 +123,9 @@ String dataRepoImplTemplate(String className, String featureName) => '''
 import 'package:dartz/dartz.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/repositories/${featureName}_repository.dart';
-import '../../../core/error/failures.dart';
+import '../../../../core/error/failures.dart';
 import '../datasources/${featureName}_remote_data_source.dart';
+
 
 class ${className}RepositoryImpl implements ${className}Repository {
   final ${className}RemoteDataSource remoteDataSource;
@@ -137,9 +138,16 @@ class ${className}RepositoryImpl implements ${className}Repository {
       final remoteData = await remoteDataSource.get$className(id);
       return Right(remoteData);
     } catch (e) {
-      // TODO: Map exceptions to a specific Failure type
-      return Left(ServerFailure(message: e.toString()));
+      // Use FailureMapper to convert exception to a Failure instance
+      Failure failure;
+      if (e is Exception) {
+        failure = FailureMapper.mapExceptionToFailure(e);
+      } else {
+        failure = GenericFailure(e.toString());
+      }
+      return Left(failure);
     }
   }
 }
+
 ''';
