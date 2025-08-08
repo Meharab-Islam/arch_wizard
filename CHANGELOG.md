@@ -1,6 +1,15 @@
+## 1.0.3
+
+- Added automatic generation of **global Failure classes** (`failures.dart` and `failure_mapper.dart`) in `lib/core/error/` when creating a new feature, ensuring consistent, reusable error handling across the app.
+- Improved repository implementation template to use `FailureMapper` for robust and professional exception-to-failure conversion.
+- Updated presentation layer templates to include **clear comments and usage guidance** instead of direct API call code, making them flexible for various use cases.
+- Enhanced DI registration code with better error logging and file creation handling.
+- Refined CLI error handling and log writing for better developer experience during feature generation.
+- Improved template structure and comments to increase code clarity and maintainability.
+
 ## 1.0.2
 
-- Update the readme file
+- Updated the README file with clearer instructions and feature descriptions.
 
 ## 1.0.1
 
