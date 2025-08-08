@@ -185,6 +185,7 @@ class ${className}Error extends ${className}State {
 /// ------------------------------
 String getxControllerTemplate(String className, String featureName) => '''
 import 'package:get/get.dart';
+import '../../../../core/error/failures.dart';
 import '../../domain/usecases/get_$featureName.dart';
 import '../../domain/entities/$featureName.dart';
 
@@ -240,7 +241,7 @@ class ${className}Controller extends GetxController {
 String riverpodTemplate(String className, String featureName) => '''
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dartz/dartz.dart';
-import '../../core/error/failures.dart';
+import '../../../../core/error/failures.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
 import '../../../../injection_container.dart';
@@ -271,6 +272,7 @@ final ${featureName}DetailsProvider =
 String providerTemplate(String className, String featureName) => '''
 import 'package:flutter/material.dart';
 import 'package:dartz/dartz.dart';
+import '../../../../core/error/failures.dart';
 import '../../core/error/failures.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
