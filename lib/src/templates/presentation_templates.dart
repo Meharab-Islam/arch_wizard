@@ -1,8 +1,41 @@
-// --- Placeholder Page ---
-String pageTemplate(String className) =>
-    '''
+/// =============================================================
+/// Presentation Layer Templates
+/// Author: Meharab Islam Nibir
+/// Description:
+///   Templates for creating Flutter presentation layer components
+///   with multiple state management options:
+///     - Stateless placeholder page
+///     - BLoC
+///     - GetX
+///     - Riverpod
+///     - Provider
+///     - GetIt registration
+/// 
+/// How to Use:
+///   1. Generate the desired template using the function.
+///   2. Place the generated file in the correct `presentation/` subfolder:
+///        presentation/pages/
+///        presentation/bloc/
+///        presentation/controllers/
+///        presentation/providers/
+///   3. Update imports, class names, and dependencies as per your project.
+///   4. Connect with domain layer use cases.
+/// =============================================================
+
+/// ------------------------------
+/// Placeholder Page
+/// ------------------------------
+/// Usage:
+///   - Scaffolds a new feature page.
+///   - Replace `$className` with your feature name.
+/// Customization:
+///   - Replace UI with actual design and widgets.
+///   - Connect your state management solution.
+/// ------------------------------
+String pageTemplate(String className) => '''
 import 'package:flutter/material.dart';
 
+/// Placeholder page for the $className feature.
 class ${className}Page extends StatelessWidget {
   const ${className}Page({super.key});
 
@@ -20,9 +53,17 @@ class ${className}Page extends StatelessWidget {
 }
 ''';
 
-// --- BLoC Templates ---
-String blocTemplate(String className, String featureName) =>
-    '''
+/// ------------------------------
+/// BLoC Template
+/// ------------------------------
+/// Usage:
+///   - For features using flutter_bloc.
+///   - Place in `presentation/bloc/`.
+/// Customization:
+///   - Replace `Get$className` with your actual use case.
+///   - Add more events and states as needed.
+/// ------------------------------
+String blocTemplate(String className, String featureName) => '''
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecases/get_$featureName.dart';
 import '${featureName}_event.dart';
@@ -45,8 +86,7 @@ class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
 }
 ''';
 
-String blocEventTemplate(String className) =>
-    '''
+String blocEventTemplate(String className) => '''
 import 'package:equatable/equatable.dart';
 
 abstract class ${className}Event extends Equatable {
@@ -56,6 +96,7 @@ abstract class ${className}Event extends Equatable {
   List<Object> get props => [];
 }
 
+/// Event to fetch details for a specific $className.
 class Get${className}DetailsEvent extends ${className}Event {
   final String id;
   const Get${className}DetailsEvent(this.id);
@@ -65,8 +106,7 @@ class Get${className}DetailsEvent extends ${className}Event {
 }
 ''';
 
-String blocStateTemplate(String className) =>
-    '''
+String blocStateTemplate(String className) => '''
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/${className.toLowerCase()}.dart';
 
@@ -98,9 +138,17 @@ class ${className}Error extends ${className}State {
 }
 ''';
 
-// --- GetX Template ---
-String getxControllerTemplate(String className, String featureName) =>
-    '''
+/// ------------------------------
+/// GetX Controller Template
+/// ------------------------------
+/// Usage:
+///   - For features using GetX.
+///   - Place in `presentation/controllers/`.
+/// Customization:
+///   - Replace `$featureName` with actual lowercase entity name.
+///   - Add extra reactive variables as needed.
+/// ------------------------------
+String getxControllerTemplate(String className, String featureName) => '''
 import 'package:get/get.dart';
 import '../../domain/usecases/get_$featureName.dart';
 import '../../domain/entities/$featureName.dart';
@@ -127,39 +175,48 @@ class ${className}Controller extends GetxController {
 }
 ''';
 
-// --- Riverpod Template ---
-String riverpodTemplate(String className, String featureName) =>
-    '''
+/// ------------------------------
+/// Riverpod Template
+/// ------------------------------
+/// Usage:
+///   - For features using Riverpod.
+///   - Place in `presentation/providers/`.
+/// Customization:
+///   - Replace `$featureName` with actual lowercase entity name.
+///   - Adjust error handling as needed.
+/// ------------------------------
+String riverpodTemplate(String className, String featureName) => '''
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
 import '../../../../injection_container.dart';
 
-/// Provides the UseCase from the GetIt service locator.
+/// Provides the UseCase from GetIt (Service Locator).
 final get${className}UseCaseProvider = Provider<Get$className>((ref) {
   return sl<Get$className>();
 });
 
-/// Fetches the feature details for a given ID and manages the async state.
-final ${featureName}DetailsProvider = FutureProvider.autoDispose.family<$className, String>((ref, id) async {
+/// Async provider for fetching $className details by ID.
+final ${featureName}DetailsProvider =
+    FutureProvider.autoDispose.family<$className, String>((ref, id) async {
   final useCase = ref.watch(get${className}UseCaseProvider);
-  
-  // UPDATED: Using a try-catch block for error handling.
+
   try {
-    // This now expects the use case to return the data directly or throw an exception.
-    final data = await useCase(id);
-    return data;
+    return await useCase(id);
   } catch (e) {
-    // If the use case throws an exception, Riverpod will catch it here
-    // and expose it as an AsyncError state to the UI.
-    throw Exception('Failed to load data. Please try again.');
+    throw Exception('Failed to load data: \${e.toString()}');
   }
 });
 ''';
 
-// --- Provider Template ---
-String providerTemplate(String className, String featureName) =>
-    '''
+/// ------------------------------
+/// Provider Template
+/// ------------------------------
+/// Usage:
+///   - For features using ChangeNotifier Provider.
+///   - Place in `presentation/providers/`.
+/// ------------------------------
+String providerTemplate(String className, String featureName) => '''
 import 'package:flutter/material.dart';
 import '../../domain/entities/$featureName.dart';
 import '../../domain/usecases/get_$featureName.dart';
@@ -196,7 +253,13 @@ class ${className}Provider extends ChangeNotifier {
 }
 ''';
 
-// --- GetIt Registration Template ---
+/// ------------------------------
+/// GetIt Registration Template
+/// ------------------------------
+/// Usage:
+///   - Add to your dependency injection setup file (`injection_container.dart`).
+///   - Adjust per state management type.
+/// ------------------------------
 String getItRegistrationTemplate(
   String className,
   String featureName,
@@ -210,30 +273,30 @@ String getItRegistrationTemplate(
       break;
     case 'getx':
       presentationDI =
-          '// For GetX, you register controllers in a Bindings class:\n// Get.lazyPut(() => ${className}Controller(sl()));';
+          '// For GetX, register controllers in Bindings:\n// Get.lazyPut(() => ${className}Controller(sl()));';
       break;
     case 'provider':
       presentationDI = 'sl.registerFactory(() => ${className}Provider(sl()));';
       break;
     case 'riverpod':
       presentationDI =
-          '// For Riverpod, dependencies are usually injected via ref.watch or other providers.';
+          '// For Riverpod, dependencies are injected via ref.watch() or providers.';
       break;
     default:
       presentationDI =
-          '// No presentation dependency injection snippet for "$state".';
+          '// No presentation DI snippet for "$state".';
   }
 
   return '''
 // Feature: $className
-//
-// Presentation
+
+// ---------------- Presentation ----------------
 $presentationDI
-//
-// Domain
+
+// ---------------- Domain ----------------
 sl.registerLazySingleton(() => Get$className(sl()));
-//
-// Data
+
+// ---------------- Data ----------------
 sl.registerLazySingleton<${className}Repository>(
   () => ${className}RepositoryImpl(remoteDataSource: sl()),
 );
