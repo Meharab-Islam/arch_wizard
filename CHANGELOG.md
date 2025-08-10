@@ -1,3 +1,6 @@
+## 1.0.4
+- Readme file update for better understanding the file structure
+
 ## 1.0.3
 
 - Added automatic generation of **global Failure classes** (`failures.dart` and `failure_mapper.dart`) in `lib/core/error/` when creating a new feature, ensuring consistent, reusable error handling across the app.
