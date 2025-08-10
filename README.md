@@ -27,7 +27,7 @@ Stop writing boilerplate and start building features. **Arch Wizard** is a power
 -----
 
 ## 🚀 Installation
-Add `arch_wizard` to the flutter project
+Add `arch_wizard` to the flutter project:
 
 ```bash
 flutter pub add arch_wizard
