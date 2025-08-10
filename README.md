@@ -27,12 +27,13 @@ Stop writing boilerplate and start building features. **Arch Wizard** is a power
 -----
 
 ## 🚀 Installation
-
-Install Arch Wizard globally via Dart's pub tool to use it anywhere:
+Add `arch_wizard` to the flutter project
 
 ```bash
 flutter pub add arch_wizard
 ```
+Install Arch Wizard globally via Dart's pub tool to use it anywhere:
+
 ```bash
 dart pub global activate arch_wizard
 ```
